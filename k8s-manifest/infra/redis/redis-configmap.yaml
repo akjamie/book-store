@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: redis-config
+data:
+  master.conf: |
+    pidfile /var/run/redis.pid
+    port 6379
+    tcp-backlog 511
+    bind 0.0.0.0
+    timeout 3600
+    tcp-keepalive 300
+    daemonize no
+    supervised no
+    loglevel notice
+    logfile /data/redis.log
+    appendonly yes
+    maxmemory-policy allkeys-lru
+  slave.conf: |
+    slaveof redis-0.redis-headless 6379
+    maxmemory-policy allkeys-lru

@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  labels:
+    app: mysql
+  name: mysql
+spec:
+  serviceName: mysql-service
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mysql
+  podManagementPolicy: OrderedReady
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      terminationGracePeriodSeconds: 10
+      containers:
+      - name: mysql
+        image: mysql:8.0.19
+        args: ["--default-authentication-plugin=mysql_native_password"]
+        env:
+        - name: MYSQL_ALLOW_EMPTY_PASSWORD
+          value: "1"
+        ports:
+        - name: mysql
+          containerPort: 3306
+        volumeMounts:
+        - name: data
+          mountPath: /var/lib/mysql
+          subPath: mysql
+        - name: conf
+          mountPath: /etc/mysql/conf.d
+        resources:
+          requests:
+            cpu: 200m
+            memory: 512Mi
+        livenessProbe:
+          exec:
+            command: [ "mysqladmin", "ping" ]
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+        readinessProbe:
+          exec:
+            command: [ "mysql", "-h", "127.0.0.1", "-e", "SELECT 1" ]
+          initialDelaySeconds: 5
+          periodSeconds: 2
+          timeoutSeconds: 1
+      volumes:
+      - name: conf
+        configMap:
+          name: mysql-conf
+  volumeClaimTemplates:
+  - metadata:
+      name: data
+    spec:
+      accessModes: [ "ReadWriteMany" ]
+      #storageClassName: "standard"
+      storageClassName: managed-nfs-storage
+      resources:
+        requests:
+          storage: 200Mi

@@ -1,0 +1,33 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: user-service
+  labels:
+    app: user-service
+data:
+  application.yaml: |-
+    spring:
+      config:
+        activate:
+          on-profile: k8s
+      datasource:
+        url: jdbc:mysql://192.168.179.1:3306/iam?charset=utf8
+      redis:
+        host: redis-headless.default.svc.it-meta.space
+        port: 6379
+    springdoc:
+      api-docs:
+        enabled: true
+      swagger-ui:
+        disable-swagger-default-url: true
+      info:
+        service-name: User Service
+        description: sample user service backed by webflux + reactive mongo stream
+        version: 1.0.0
+        license-name: apache-2.0
+        license-url: https://www.apache.org/licenses/LICENSE-2.0.html
+        contact-name: Jamie Zhang
+        contact-email: akjamie.zhang@outlook.com
+        contact-url: https://akjamie.github.io
+        terms-of-service: copy right @2022
+

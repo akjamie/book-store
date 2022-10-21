@@ -1,0 +1,21 @@
+spring:
+  redis:
+    lettuce:
+      pool:
+        max-active: 3
+        max-idle: 2
+        min-idle: 1
+        max-wait: 10000
+    client-type: lettuce
+
+auth:
+  jwt:
+    rsa-key-path: ${JWT_KEY_PATH:rsa-20221017.pem}
+
+logging:
+  level:
+    root: info
+    org.akj.springboot: debug
+server:
+  servlet:
+    context-path: /${spring.application.name}

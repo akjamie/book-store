@@ -1,0 +1,36 @@
+spring:
+  datasource:
+    auth:
+      url: jdbc:mysql://localhost:3306/auth?charset=utf8
+      username: jamie
+      password: Test1234
+    iam:
+      url: jdbc:mysql://localhost:3306/iam?charset=utf8
+      username: jamie
+      password: Test1234
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    disable-swagger-default-url: true
+  info:
+    service-name: User Service
+    description: sample user service backed by webflux + reactive mongo stream
+    version: 1.0.0
+    license-name: apache-2.0
+    license-url: https://www.apache.org/licenses/LICENSE-2.0.html
+    contact-name: Jamie Zhang
+    contact-email: akjamie.zhang@outlook.com
+    contact-url: https://akjamie.github.io
+    terms-of-service: copy right @2022
+
+server:
+  port: 8044
+
+logging:
+  level:
+    root: info
+    org.springframework.security.web.FilterChainProxy: trace
+    org.springframework.security.web.access.ExceptionTranslationFilter: trace
+    org.springframework.security.oauth2: debug
+    org.springframework.jdbc.core.JdbcTemplate: debug

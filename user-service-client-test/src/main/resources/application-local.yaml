@@ -1,0 +1,10 @@
+spring:
+  redis:
+    host: 192.168.179.157
+    port: 6379
+
+service.user.url: http://localhost:8045
+
+server:
+  port: 8046
+

@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user-service
+  labels:
+    app: user-service
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: user-service
+  template:
+    metadata:
+      labels:
+        app: user-service
+    spec:
+      containers:
+        - name: user-service
+          image: akjamie/bookstore-user-service:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+          env:
+          - name: SPRING_PROFILES_ACTIVE
+            value: k8s
+          - name: DB_USERNAME
+            valueFrom:
+              secretKeyRef:
+                key: "spring.datasource.username"
+                name: user-service
+          - name: DB_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                key: "spring.datasource.password"
+                name: user-service
+          - name: JWT_KEY_PATH
+            value: "file:/etc/keystore/rsa.key"
+          resources:
+            requests:
+              memory: 420Mi
+          readinessProbe:
+            httpGet:
+              port: 8080
+              path: /user-service/actuator/health
+            failureThreshold: 5
+            successThreshold: 3
+            initialDelaySeconds: 90
+            periodSeconds: 10
+          volumeMounts:
+            - mountPath: "/etc/keystore"
+              name: jwt-rsa-keystore
+              readOnly: true
+      volumes:
+        - name: jwt-rsa-keystore
+          secret:
+            secretName: jwt-rsa
+            items:
+              - key: rsa.key
+                path: rsa.key

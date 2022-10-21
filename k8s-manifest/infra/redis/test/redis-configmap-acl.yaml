@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: acl-config
+data:
+  users.acl: |
+    # user "default" is the default user ( act as admin ) and user "replication" is used by the nodes for the replication.
+    user default on #bc97edb7ee1eb1a19eba85a08b9aa6d3f9930305a6bd9279f33b87d81155d029 ~* &* +@all
+    user replication on #bc97edb7ee1eb1a19eba85a08b9aa6d3f9930305a6bd9279f33b87d81155d029 +psync +replconf +ping
+    user jamie on #bc97edb7ee1eb1a19eba85a08b9aa6d3f9930305a6bd9279f33b87d81155d029 ~* &* +@all -@dangerous
