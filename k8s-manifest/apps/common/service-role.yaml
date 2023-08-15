@@ -4,7 +4,7 @@ metadata:
   name: read-only
 rules:
   - apiGroups: ["", "extensions", "apps"]
-    resources: ["configmaps", "pods", "services", "endpoints", "secrets"]
+    resources: ["configmaps", "pods", "services", "endpoints", "secrets", "deployments", "statefulsets"]
     verbs: ["get", "list", "watch"]
 
 ---

@@ -1,22 +1,22 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: user-service-client-test
+  name: order-service
   labels:
-    app: user-service-client-test
+    app: order-service
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: user-service-client-test
+      app: order-service
   template:
     metadata:
       labels:
-        app: user-service-client-test
+        app: order-service
     spec:
       containers:
-        - name: user-service-client-test
-          image: akjamie/bookstore-user-service-client-test:latest
+        - name: order-service
+          image: akjamie/bookstore-order-service:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
@@ -31,7 +31,7 @@ spec:
           readinessProbe:
             httpGet:
               port: 8080
-              path: /user-service-client-test/actuator/health
+              path: /actuator/health
             failureThreshold: 5
             successThreshold: 3
             initialDelaySeconds: 90

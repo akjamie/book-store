@@ -5,7 +5,7 @@ metadata:
   labels:
     app: user-service
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: user-service
@@ -27,12 +27,12 @@ spec:
             valueFrom:
               secretKeyRef:
                 key: "spring.datasource.username"
-                name: user-service
+                name: db-secret
           - name: DB_PASSWORD
             valueFrom:
               secretKeyRef:
                 key: "spring.datasource.password"
-                name: user-service
+                name: db-secret
           - name: JWT_KEY_PATH
             value: "file:/etc/keystore/rsa.key"
           resources:
@@ -41,7 +41,7 @@ spec:
           readinessProbe:
             httpGet:
               port: 8080
-              path: /user-service/actuator/health
+              path: /actuator/health
             failureThreshold: 5
             successThreshold: 3
             initialDelaySeconds: 90

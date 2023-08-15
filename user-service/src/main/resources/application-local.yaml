@@ -15,7 +15,7 @@ springdoc:
     disable-swagger-default-url: true
   info:
     service-name: User Service
-    description: sample user service backed by webflux + reactive mongo stream
+    description: Sample user service
     version: 1.0.0
     license-name: apache-2.0
     license-url: https://www.apache.org/licenses/LICENSE-2.0.html
