@@ -1,6 +1,5 @@
 package org.akj.springboot.user.config;
 
-import org.akj.springboot.auth.JwtTokenUtils;
 import org.akj.springboot.auth.security.JwtAuthenticationEntryPoint;
 import org.akj.springboot.auth.security.filter.JwtAuthenticationExceptionFilter;
 import org.akj.springboot.auth.security.filter.JwtTokenAuthenticationFilter;
@@ -13,15 +12,18 @@ import org.akj.springboot.user.security.provider.MobileSmsCodeAuthenticationProv
 import org.akj.springboot.user.security.provider.UsernamePasswordAuthenticationProvider;
 import org.akj.springboot.user.service.SmsCodeService;
 import org.akj.springboot.user.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.context.annotation.Primary;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -31,71 +33,89 @@ import org.springframework.web.filter.CorsFilter;
 
 import java.util.List;
 
-import static org.akj.springboot.user.constant.Constant.*;
+import static org.akj.springboot.user.constant.Constant.DEFAULT_SIGN_IN_PROCESSING_URL_FORM;
+import static org.akj.springboot.user.constant.Constant.DEFAULT_SIGN_OUT_PROCESSING_URL;
 
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = true)
+//@EnableMethodSecurity(prePostEnabled = true, jsr250Enabled = true, securedEnabled = true)
 public class WebSecurityConfiguration {
-	@Autowired
-	private UserService userService;
+	private final UserService userService;
 
-	@Autowired
-	private SmsCodeService smsCodeService;
+	private final SmsCodeService smsCodeService;
 
-	@Autowired
-	private JwtTokenAuthenticationFilter jwtTokenAuthenticationFilter;
+	private final JwtTokenAuthenticationFilter jwtTokenAuthenticationFilter;
 
-	@Autowired
-	JwtAuthenticationExceptionFilter authenticationExceptionFilter;
-	@Autowired
-	private JwtTokenAuthenticationSuccessHandler jwtTokenAuthenticationSuccessHandler;
+	private final JwtAuthenticationExceptionFilter authenticationExceptionFilter;
+	private final JwtTokenAuthenticationSuccessHandler jwtTokenAuthenticationSuccessHandler;
 
-	@Autowired
-	private JwtTokenAuthenticationFailureHandler jwtTokenAuthenticationFailureHandler;
+	private final JwtTokenAuthenticationFailureHandler jwtTokenAuthenticationFailureHandler;
 
-	@Autowired
-	private JwtLogoutSuccessHandler jwtLogoutSuccessHandler;
-	@Autowired
-	private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+	private final JwtLogoutSuccessHandler jwtLogoutSuccessHandler;
+	private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 
-	@Autowired
-	private JwtAccessDeniedHandler jwtAccessDeniedHandler;
+	private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
 
-	@Autowired
-	BCryptPasswordEncoder bCryptPasswordEncoder;
+	private final BCryptPasswordEncoder bCryptPasswordEncoder;
+
+	public WebSecurityConfiguration(UserService userService,
+									SmsCodeService smsCodeService,
+									JwtTokenAuthenticationFilter jwtTokenAuthenticationFilter,
+									JwtAuthenticationExceptionFilter authenticationExceptionFilter,
+									JwtTokenAuthenticationSuccessHandler jwtTokenAuthenticationSuccessHandler,
+									JwtTokenAuthenticationFailureHandler jwtTokenAuthenticationFailureHandler,
+									JwtLogoutSuccessHandler jwtLogoutSuccessHandler,
+									JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint,
+									JwtAccessDeniedHandler jwtAccessDeniedHandler,
+									BCryptPasswordEncoder bCryptPasswordEncoder) {
+		this.userService = userService;
+		this.smsCodeService = smsCodeService;
+		this.jwtTokenAuthenticationFilter = jwtTokenAuthenticationFilter;
+		this.authenticationExceptionFilter = authenticationExceptionFilter;
+		this.jwtTokenAuthenticationSuccessHandler = jwtTokenAuthenticationSuccessHandler;
+		this.jwtTokenAuthenticationFailureHandler = jwtTokenAuthenticationFailureHandler;
+		this.jwtLogoutSuccessHandler = jwtLogoutSuccessHandler;
+		this.jwtAuthenticationEntryPoint = jwtAuthenticationEntryPoint;
+		this.jwtAccessDeniedHandler = jwtAccessDeniedHandler;
+		this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+	}
 
 	@Bean
+	@Order(Ordered.HIGHEST_PRECEDENCE)
 	SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-		http.csrf().disable()
-				.headers().frameOptions().disable()
-				//use token thus no need session
-				.and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+		http.csrf(AbstractHttpConfigurer::disable)
+				.headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable))
+				.sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 				//access control for endpoints
-				.and().authorizeRequests()
-				.antMatchers("/h2-console/**", "/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**", "/actuator",
-						"/actuator/**", "/v1/errors").permitAll()
-				.antMatchers(DEFAULT_SIGN_IN_PROCESSING_URL_FORM, DEFAULT_SIGN_IN_PROCESSING_URL_SMS,
-						"/v1/auth/**").permitAll()
-				.anyRequest().authenticated()
-				// login config
-				.and().formLogin()
-				.loginProcessingUrl(DEFAULT_SIGN_IN_PROCESSING_URL_FORM)
-				.failureHandler(jwtTokenAuthenticationFailureHandler)
-				.successHandler(jwtTokenAuthenticationSuccessHandler)
-				.permitAll()
-				//logout
-				.and().logout().logoutUrl(DEFAULT_SIGN_OUT_PROCESSING_URL)
-				.logoutSuccessHandler(jwtLogoutSuccessHandler)
+				.authorizeRequests((authorizeRequests) ->
+						authorizeRequests.requestMatchers("/h2-console/**",
+								"/swagger-ui/**",
+								"/swagger-ui.html",
+								"/v3/api-docs/**",
+								"/actuator",
+								"/actuator/**",
+								"/v1/auth/public-cert",
+								"/v1/auth/sms-code",
+								"/v1/auth/form",
+								"/v1/errors"
+						).permitAll().anyRequest().authenticated()
+				)
+				// form login
+				.formLogin(form -> form.loginProcessingUrl(DEFAULT_SIGN_IN_PROCESSING_URL_FORM)
+						.failureHandler(jwtTokenAuthenticationFailureHandler)
+						.successHandler(jwtTokenAuthenticationSuccessHandler)
+						.permitAll())
+				// logout
+				.logout(logout -> logout.logoutUrl(DEFAULT_SIGN_OUT_PROCESSING_URL).logoutSuccessHandler(jwtLogoutSuccessHandler))
 				// authentication providers
-				.and().authenticationManager(authenticationManager())
+				.authenticationManager(authenticationManager())
 				// filters
 				.addFilterBefore(mobileSmsCodeAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
 				.addFilterBefore(jwtTokenAuthenticationFilter, LogoutFilter.class)
 				.addFilterBefore(authenticationExceptionFilter, CorsFilter.class)
 				// exception handle
-				.exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint)
-				.accessDeniedHandler(jwtAccessDeniedHandler);
+				.exceptionHandling(exceptionHandling -> exceptionHandling.authenticationEntryPoint(jwtAuthenticationEntryPoint)
+						.accessDeniedHandler(jwtAccessDeniedHandler));
 
 		return http.build();
 	}

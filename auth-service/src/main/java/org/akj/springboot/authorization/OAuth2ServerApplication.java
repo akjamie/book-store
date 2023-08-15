@@ -8,6 +8,8 @@ import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfigurat
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.context.annotation.ComponentScan;
 
+import java.util.TimeZone;
+
 /**
  * Springboot application - Entry point
  *
@@ -20,6 +22,7 @@ import org.springframework.context.annotation.ComponentScan;
 public class OAuth2ServerApplication {
 
     public static void main(String[] args) {
+        TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
         SpringApplication.run(OAuth2ServerApplication.class, args);
     }
 

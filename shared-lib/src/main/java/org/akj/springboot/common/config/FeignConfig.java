@@ -9,8 +9,11 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class FeignConfig {
-	@Autowired
-	ObjectMapper objectMapper;
+	private final ObjectMapper objectMapper;
+
+	public FeignConfig(ObjectMapper objectMapper) {
+		this.objectMapper = objectMapper;
+	}
 
 	@Bean
 	public Decoder feignDecoder() {

@@ -27,15 +27,18 @@ spring:
     database-platform: org.hibernate.dialect.MySQL8Dialect
   liquibase:
     change-log: classpath:/db/changelog-master.xml
+  mvc:
+    hiddenmethod:
+      filter:
+        enabled: true
 
 security.oauth2:
   jwt:
     key-pair:
       store-pass: ${JWT_KEYPAIR_STOREPASS:Test1234}
       alias: ${JWT_KEYPAIR_ALIAS:internal-certs}
-      file-path: ${JWT_KEYPAIR_PATH:keystore.p12}
+      file-path: ${JWT_KEYPAIR_PATH:key-files/keystore.p12}
   resource:
-
     token-info-uri: ${SECURITY_OAUTH2_TOKEN_URL:http://localhost:8044/oauth/check_token}
     verifier-key.file-path: ${SECURITY_OAUTH2_VERIFIER_KEY_PATH:publicKey.pem}
   client:

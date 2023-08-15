@@ -1,17 +1,15 @@
 package org.akj.springboot.user.controller;
 
+import jakarta.validation.Valid;
 import org.akj.springboot.common.domain.Result;
 import org.akj.springboot.user.domain.entity.User;
 import org.akj.springboot.user.mapper.UserMapstructMapper;
 import org.akj.springboot.user.service.UserService;
 import org.akj.springboot.user.vo.UserRegistrationRequest;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import java.security.Principal;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/v1/users")

@@ -1,4 +1,8 @@
 spring:
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:local}
+  application:
+    name: user-service
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -19,23 +23,24 @@ spring:
     database-platform: org.hibernate.dialect.MySQL8Dialect
   liquibase:
     change-log: classpath:db/changeset-master.xml
-  redis:
-    lettuce:
-      pool:
-        max-active: 3
-        max-idle: 2
-        min-idle: 1
-        max-wait: 10000
-    client-type: lettuce
+  data:
+    redis:
+      lettuce:
+        pool:
+          max-active: 3
+          max-idle: 2
+          min-idle: 1
+          max-wait: 10000
+      client-type: lettuce
 
 auth:
   jwt:
     rsa-key-path: ${JWT_KEY_PATH:rsa-20221017.key}
-#    key-pair:
-#      kid: ${JWT_KEYSTORE_KID:internal-certs}
-#      store-pass: ${JWT_KEYSTORE_PASSWORD:Test1234}
-#      store-file-path: ${JWT_KEYSTORE_PATH:keystore.p12}
-    time-to-live: 300   # seconds
+    #    key-pair:
+    #      kid: ${JWT_KEYSTORE_KID:internal-certs}
+    #      store-pass: ${JWT_KEYSTORE_PASSWORD:Test1234}
+    #      store-file-path: ${JWT_KEYSTORE_PATH:keystore.p12}
+    time-to-live: 3600   # seconds
   sms-code:
     time-to-live: 5     # minutes
 
@@ -45,7 +50,5 @@ logging:
     com.zaxxer.hikari.HikariConfig: debug
     org.akj.springboot: debug
 server:
-  servlet:
-    context-path: /${spring.application.name}
   port: 8080
 

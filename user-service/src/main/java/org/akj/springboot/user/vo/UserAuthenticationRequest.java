@@ -3,7 +3,7 @@ package org.akj.springboot.user.vo;
 import lombok.Data;
 import org.akj.springboot.user.domain.AuthType;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 @Data
 public class UserAuthenticationRequest {

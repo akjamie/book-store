@@ -34,6 +34,10 @@ public class Result {
 		return new Result(body);
 	}
 
+	public static Result success() {
+		return new Result(null);
+	}
+
 	public static Result ok() {
 		return new Result(null);
 	}

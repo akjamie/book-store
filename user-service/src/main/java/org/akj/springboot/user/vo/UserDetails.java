@@ -9,20 +9,28 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Stream;
 
 @Data
 public class UserDetails {
-	private static final String ROLE_PREFIX = "Role_";
+	private static final String ROLE_PREFIX = "ROLE_";
 	private User principal;
 	List<SimpleGrantedAuthority> authorities = new ArrayList<>();
 
-	public static UserDetails valueOf(User user, List<Group> roles, List<Authority> authorities) {
+	public static UserDetails valueOf(User user, List<Group> groups, List<Authority> authorities) {
 		UserDetails userDetails = new UserDetails();
 		userDetails.setPrincipal(user);
 
-		userDetails.getAuthorities().addAll(roles.stream().map(role -> new SimpleGrantedAuthority(ROLE_PREFIX + role.getName())).toList());
-		userDetails.getAuthorities().addAll(authorities.stream().map(authority -> new SimpleGrantedAuthority(authority.getName())).toList());
+
+		// roles
+		List<SimpleGrantedAuthority> roles = groups.stream()
+				.map(group -> new SimpleGrantedAuthority("ROLE_" + group.getName().toUpperCase(Locale.ROOT)))
+				.toList();
+
+		userDetails.getAuthorities().addAll(roles);
+		userDetails.getAuthorities().addAll(authorities.stream().map(authority -> new SimpleGrantedAuthority(authority.getName()))
+				.toList());
 
 		return userDetails;
 	}

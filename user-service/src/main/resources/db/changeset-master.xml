@@ -20,4 +20,8 @@
         <sqlFile path="db/dml-init-data-20220927.sql" />
     </changeSet>
 
+    <changeSet  id="20230814-1"  author="Jamie Zhang">
+        <sqlFile path="db/dml-init-data-20230814.sql" />
+    </changeSet>
+
 </databaseChangeLog>

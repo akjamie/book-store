@@ -10,10 +10,12 @@ import org.akj.springboot.user.repository.UserRepository;
 import org.akj.springboot.user.vo.UserDetails;
 import org.springframework.data.domain.Example;
 import org.springframework.lang.NonNull;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 @Service
@@ -85,8 +87,7 @@ public class UserService {
 		User userSample = new User();
 		userSample.setUserName(userName);
 
-		User user = userRepository.findOne(Example.of(userSample)).orElse(null);
-		return user;
+		return userRepository.findOne(Example.of(userSample)).orElse(null);
 	}
 
 	private UserDetails wrap(@NonNull User user) {

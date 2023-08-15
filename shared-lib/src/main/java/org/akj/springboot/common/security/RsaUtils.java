@@ -33,16 +33,14 @@ public class RsaUtils {
 	public String encrypt(String str) throws Exception {
 		Cipher cipher = Cipher.getInstance("RSA");
 		cipher.init(Cipher.ENCRYPT_MODE, privateKey);
-		String outStr = Base64.getEncoder().encodeToString(cipher.doFinal(str.getBytes(CHARSET_NAME)));
-		return outStr;
+		return Base64.getEncoder().encodeToString(cipher.doFinal(str.getBytes(CHARSET_NAME)));
 	}
 
 	public String decrypt(String str) throws Exception {
 		byte[] inputByte = Base64.getDecoder().decode(str.getBytes("UTF-8"));
 		Cipher cipher = Cipher.getInstance("RSA");
 		cipher.init(Cipher.DECRYPT_MODE, publicKey);
-		String outStr = new String(cipher.doFinal(inputByte));
-		return outStr;
+		return new String(cipher.doFinal(inputByte));
 	}
 
 	@SneakyThrows
