@@ -23,8 +23,20 @@ spec:
           env:
           - name: SPRING_PROFILES_ACTIVE
             value: k8s
+          - name: DB_USERNAME
+            valueFrom:
+              secretKeyRef:
+                key: "spring.datasource.username"
+                name: db-secret
+          - name: DB_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                key: "spring.datasource.password"
+                name: db-secret
           - name: JWT_KEY_PATH
             value: "file:/etc/keystore/rsa.pem"
+          - name: SECRET_NAME
+            value: db-secret
           resources:
             requests:
               memory: 256Mi
@@ -47,3 +59,9 @@ spec:
             items:
               - key: rsa.pem
                 path: rsa.pem
+        - name: order-service-cm
+          configMap:
+            name: order-service
+        - name: order-service-secret
+          secret:
+            secretName: order-service

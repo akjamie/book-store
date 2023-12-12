@@ -43,7 +43,7 @@ public class WebSecurityConfig {
 	}
 
 	@Bean
-	@Order(value = HIGHEST_PRECEDENCE - 1)
+	//@Order(value = HIGHEST_PRECEDENCE - 1)
 	@ConditionalOnMissingBean(SecurityFilterChain.class)
 	SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		http.csrf(AbstractHttpConfigurer::disable)

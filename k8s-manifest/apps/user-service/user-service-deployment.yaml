@@ -14,25 +14,44 @@ spec:
       labels:
         app: user-service
     spec:
+      initContainers:
+        - name: init
+          image: eclipse-temurin:19-jre-alpine
+          imagePullPolicy: IfNotPresent
+          command:
+            - sh
+            - "-c"
+            - |
+              echo 'Coping keystore file from /etc/secret to /etc/keystore.'
+              cp /etc/secret/rsa.key /etc/keystore/rsa.key
+              chmod 777 /etc/keystore/rsa.key
+              echo 'Completed Coping keystore file.'
+          volumeMounts:
+            - name: conf
+              mountPath: /etc/keystore
+              subPath: rsa.key
+            - name: jwt-rsa-keystore
+              mountPath: /etc/secret
       containers:
         - name: user-service
           image: akjamie/bookstore-user-service:latest
           imagePullPolicy: Always
+          args: ["--spring.profiles.active=$(ENV)"]
           ports:
             - containerPort: 8080
           env:
-          - name: SPRING_PROFILES_ACTIVE
+          - name: ENV
             value: k8s
-          - name: DB_USERNAME
-            valueFrom:
-              secretKeyRef:
-                key: "spring.datasource.username"
-                name: db-secret
-          - name: DB_PASSWORD
-            valueFrom:
-              secretKeyRef:
-                key: "spring.datasource.password"
-                name: db-secret
+#          - name: DB_USERNAME
+#            valueFrom:
+#              secretKeyRef:
+#                key: "spring.datasource.username"
+#                name: db-secret
+#          - name: DB_PASSWORD
+#            valueFrom:
+#              secretKeyRef:
+#                key: "spring.datasource.password"
+#                name: db-secret
           - name: JWT_KEY_PATH
             value: "file:/etc/keystore/rsa.key"
           resources:
@@ -47,9 +66,9 @@ spec:
             initialDelaySeconds: 90
             periodSeconds: 10
           volumeMounts:
-            - mountPath: "/etc/keystore"
-              name: jwt-rsa-keystore
-              readOnly: true
+            - name: conf
+              mountPath: /etc/keystore
+              subPath: rsa.key
       volumes:
         - name: jwt-rsa-keystore
           secret:
@@ -57,3 +76,5 @@ spec:
             items:
               - key: rsa.key
                 path: rsa.key
+        - name: conf
+          emptyDir: {}

@@ -5,16 +5,14 @@ metadata:
   labels:
     app: user-service
 data:
-  application.yaml: |-
+  application-k8s.yaml: |-
     spring:
-      config:
-        activate:
-          on-profile: k8s
       datasource:
         url: jdbc:mysql://192.168.179.1:3306/iam?charset=utf8
-      redis:
-        host: redis-headless.default.svc.it-meta.space
-        port: 6379
+      data:
+        redis:
+          host: redis-headless.default.svc.it-meta.space
+          port: 6379
     springdoc:
       api-docs:
         enabled: true

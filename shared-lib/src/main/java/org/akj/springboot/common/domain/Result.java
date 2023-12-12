@@ -34,7 +34,7 @@ public class Result {
 		return new Result(body);
 	}
 
-	public static Result success() {
+	public static Result successWithEmptyResponse() {
 		return new Result(null);
 	}
 

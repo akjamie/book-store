@@ -49,6 +49,7 @@ logging:
     root: info
     com.zaxxer.hikari.HikariConfig: debug
     org.akj.springboot: debug
+    org.springframework.cloud: debug
 server:
   port: 8080
 

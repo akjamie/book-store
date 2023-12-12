@@ -1,20 +1,28 @@
 spring:
   application:
     name: user-service
-  profiles:
-    active: ${SPRING_PROFILES_ACTIVE:local}
-  cloud:
+  main:
+    cloud-platform: none
+management:
+  health:
     kubernetes:
-      enabled: false
+      enabled:false
 
 ---
 spring:
-  config:
-    activate:
-      on-cloud-platform: kubernetes
+  main:
+    cloud-platform: kubernetes
   cloud:
     kubernetes:
-      enabled: true
+      loadbalancer:
+        mode: service
+      secrets:
+        enabled: true
       config:
         enabled: true
         name: ${CONFIG_MAP_NAME:user-service}
+
+management:
+  health:
+    kubernetes:
+      enabled:true

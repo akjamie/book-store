@@ -6,22 +6,16 @@ import com.nimbusds.jose.jwk.KeyType
 import com.nimbusds.jose.util.IOUtils
 import com.nimbusds.jwt.SignedJWT
 import org.akj.springboot.common.security.RsaUtils
-import org.bouncycastle.crypto.engines.EthereumIESEngine
-import org.checkerframework.checker.units.qual.K
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.core.io.ClassPathResource
 import org.springframework.core.io.FileSystemResource
-import org.springframework.core.io.FileUrlResource
 import spock.lang.Ignore
 import spock.lang.Shared
 import spock.lang.Specification
-import sun.security.rsa.RSAUtil
 
-import java.nio.charset.Charset
 import java.security.interfaces.RSAPrivateKey
 import java.security.interfaces.RSAPublicKey
-import java.security.spec.PKCS8EncodedKeySpec
 
 class JWKUnitTest extends Specification {
     @Shared
@@ -56,7 +50,7 @@ class JWKUnitTest extends Specification {
     @Ignore
     def "Verify FilePathResource"() {
         given:
-        def ins = new FileSystemResource("D:\\Work-benches\\workspace-20220908\\fenixsoft-bookstore\\user-service\\src\\main\\resources\\keystore.p12").getInputStream()
+        def ins = new FileSystemResource("keystore.p12").getInputStream()
 
         expect:
         ins.available() > 0
