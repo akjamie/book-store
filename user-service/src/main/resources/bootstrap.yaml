@@ -1,20 +1,25 @@
 spring:
   application:
     name: user-service
-  profiles:
-    active: ${SPRING_PROFILES_ACTIVE:local}
+  main:
+    cloud-platform: kubernetes
   cloud:
     kubernetes:
-      enabled: false
-
----
-spring:
-  config:
-    activate:
-      on-cloud-platform: kubernetes
-  cloud:
-    kubernetes:
-      enabled: true
-      config:
+      discovery:
+        namespaces: ${NAMESPACE:book-store}
+      reload:
         enabled: true
+        monitoring-config-maps: true
+        monitoring-secrets: true
+      loadbalancer:
+        mode: service
+        cluster-domain: it-meta.space
+      secrets:
+        name: ${SECRET_NAME:user-service}
+        enable-api: true
+        enabled: true
+      config:
         name: ${CONFIG_MAP_NAME:user-service}
+        enabled: true
+        enable-api: true
+        namespace: ${NAMESPACE:book-store}

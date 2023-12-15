@@ -3,7 +3,7 @@ package org.akj.springboot.user.domain.entity;
 import lombok.Data;
 import org.akj.springboot.common.domain.BaseEntity;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "group_members", uniqueConstraints = {@UniqueConstraint(columnNames = {"userId", "groupId"})})

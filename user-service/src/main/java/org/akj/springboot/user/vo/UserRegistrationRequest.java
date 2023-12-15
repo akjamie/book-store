@@ -4,7 +4,7 @@ import lombok.Data;
 import org.akj.springboot.user.domain.AuthType;
 import org.hibernate.validator.constraints.Length;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 @Data
 public class UserRegistrationRequest {

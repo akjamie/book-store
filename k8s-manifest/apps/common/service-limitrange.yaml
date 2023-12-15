@@ -1,11 +1,11 @@
 apiVersion: v1
 kind: LimitRange
 metadata:
-  name: memory-resource-constraint
+  name: memory-resource-limitrange
 spec:
   limits:
     - max:
-        memory: 420Mi
+        memory: 256Mi
       min:
-        memory: 0.5Mi
+        memory: 40Mi
       type: Container

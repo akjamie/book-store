@@ -1,10 +1,12 @@
 package org.akj.springboot.authorization.domain.iam.entity;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.akj.springboot.common.domain.BaseEntity;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
+@EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "groups")
 @Data

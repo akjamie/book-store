@@ -1,6 +1,7 @@
 package org.akj.springboot.user;
 
 import org.akj.springboot.auth.config.GenericSecurityConfig;
+import org.akj.springboot.auth.config.JacksonConfig;
 import org.akj.springboot.auth.config.JwtTokenConfigProperties;
 import org.akj.springboot.auth.config.RedisConfig;
 import org.springframework.boot.SpringApplication;
@@ -12,7 +13,7 @@ import java.util.TimeZone;
 
 @SpringBootApplication(scanBasePackages = {"org.akj.springboot.user", "org.akj.springboot.common"},
 		exclude = {RedisRepositoriesAutoConfiguration.class,})
-@Import({JwtTokenConfigProperties.class, RedisConfig.class, GenericSecurityConfig.class})
+@Import({JwtTokenConfigProperties.class, RedisConfig.class, GenericSecurityConfig.class, JacksonConfig.class})
 public class UserServiceApplication {
 	public static void main(String[] args) {
 		TimeZone.setDefault(TimeZone.getTimeZone("UTC"));

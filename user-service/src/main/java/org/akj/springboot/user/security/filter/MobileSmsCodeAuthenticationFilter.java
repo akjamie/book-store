@@ -1,5 +1,8 @@
 package org.akj.springboot.user.security.filter;
 
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.akj.springboot.user.constant.Constant;
 import org.akj.springboot.user.security.provider.MobileSmsCodeAuthenticationToken;
@@ -9,17 +12,14 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @Slf4j
 public class MobileSmsCodeAuthenticationFilter extends AbstractAuthenticationProcessingFilter {
 	private boolean postOnly = true;
 
-	private String mobileParameter = Constant.SPRING_SECURITY_FORM_MOBILE_KEY;
-	private String codeParameter = Constant.SPRING_SECURITY_FORM_SMSCODE_KEY;
+	private final String mobileParameter = Constant.SPRING_SECURITY_FORM_MOBILE_KEY;
+	private final String codeParameter = Constant.SPRING_SECURITY_FORM_SMSCODE_KEY;
 	private static final AntPathRequestMatcher DEFAULT_ANT_PATH_REQUEST_MATCHER = new AntPathRequestMatcher(Constant.DEFAULT_SIGN_IN_PROCESSING_URL_SMS,
 			"POST");
 

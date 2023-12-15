@@ -8,7 +8,7 @@ import org.akj.springboot.user.service.SmsCodeService;
 import org.akj.springboot.user.vo.SmsCode;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 import static org.akj.springboot.user.exception.ErrorCodeMap.*;
 

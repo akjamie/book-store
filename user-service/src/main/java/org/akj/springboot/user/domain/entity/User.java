@@ -1,18 +1,18 @@
 package org.akj.springboot.user.domain.entity;
 
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.ToString;
+import org.akj.springboot.common.domain.BaseEntity;
 import org.akj.springboot.user.domain.AuthType;
 import org.akj.springboot.user.domain.UserStatus;
-import org.akj.springboot.common.domain.BaseEntity;
-import org.hibernate.annotations.GenericGenerator;
 
 import java.time.Instant;
 
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
-
+@EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "users")
 @Data

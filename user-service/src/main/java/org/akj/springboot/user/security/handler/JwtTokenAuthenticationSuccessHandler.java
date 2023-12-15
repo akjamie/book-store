@@ -1,6 +1,9 @@
 package org.akj.springboot.user.security.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.akj.springboot.auth.config.JwtTokenConfigProperties;
 import org.akj.springboot.auth.vo.UserToken;
@@ -14,9 +17,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.Duration;
 
@@ -32,7 +32,7 @@ public class JwtTokenAuthenticationSuccessHandler implements AuthenticationSucce
     private ObjectMapper mapper;
 
     @Autowired
-    RedisTemplate redisTemplate;
+    RedisTemplate<Object,Object> redisTemplate;
 
     @Autowired
     private JwtTokenConfigProperties jwtTokenConfigProperties;
@@ -47,7 +47,7 @@ public class JwtTokenAuthenticationSuccessHandler implements AuthenticationSucce
 
             UserToken token = tokenService.issueToken(user);
             // cache in redis
-            redisTemplate.opsForValue().set(String.format(TOKEN_KEY_PATTERN, u.getId()), token.getToken(),
+            redisTemplate.opsForValue().set(String.format(TOKEN_KEY_PATTERN, u.getId()), token,
                     Duration.ofSeconds(jwtTokenConfigProperties.getTimeToLive()));
 
             httpServletResponse.getWriter().write(mapper.writeValueAsString(token));
@@ -56,5 +56,6 @@ public class JwtTokenAuthenticationSuccessHandler implements AuthenticationSucce
             log.error(e.getMessage(), e);
         }
     }
+
 }
 

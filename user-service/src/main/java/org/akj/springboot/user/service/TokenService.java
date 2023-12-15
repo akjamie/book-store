@@ -8,6 +8,7 @@ import org.akj.springboot.user.domain.entity.User;
 import org.akj.springboot.user.vo.UserDetails;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.jose.jws.SignatureAlgorithm;
 import org.springframework.security.oauth2.jwt.*;
 import org.springframework.stereotype.Service;
@@ -29,7 +30,7 @@ import static org.akj.springboot.user.constant.Constant.TOKEN_KEY_PATTERN;
 @Slf4j
 public class TokenService {
 
-	private final RedisTemplate redisTemplate;
+	private final RedisTemplate<String, String> redisTemplate;
 
 	private final JwtEncoder jwtEncoder;
 
@@ -38,7 +39,7 @@ public class TokenService {
 	private final JwtTokenUtils jwtTokenUtils;
 
 
-	public TokenService(RedisTemplate redisTemplate, JwtEncoder jwtEncoder,
+	public TokenService(RedisTemplate<String, String> redisTemplate, JwtEncoder jwtEncoder,
 						JwtTokenConfigProperties jwtTokenConfigProperties, JwtTokenUtils jwtTokenUtils) {
 		this.redisTemplate = redisTemplate;
 		this.jwtEncoder = jwtEncoder;
@@ -72,13 +73,13 @@ public class TokenService {
 				.notBefore(localDateTime.atZone(ZoneId.systemDefault()).toInstant())
 				.issuedAt(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
 
-		claims(userDetails).forEach((x, y) -> claimsSetBuilder.claim(x, y));
+		claims(userDetails).forEach(claimsSetBuilder::claim);
 		JwtClaimsSet jwtClaimsSet = claimsSetBuilder.build();
 
 		Jwt jwt = jwtEncoder.encode(JwtEncoderParameters.from(JwsHeader.with(SignatureAlgorithm.RS256).build(),
 				jwtClaimsSet));
 
-		return jwtTokenUtils.convert(jwt);
+		return jwtTokenUtils.convert(jwt, user.getId());
 	}
 
 	private UserToken getTokenFromCache(User user) {
@@ -99,7 +100,7 @@ public class TokenService {
 		HashMap<String, Object> claims = new HashMap<>();
 		claims.put(TOKEN_USER_ID, userDetails.getPrincipal().getId());
 
-		List<String> groups = userDetails.getAuthorities().stream().map(authority -> authority.getAuthority()).toList();
+		List<String> groups = userDetails.getAuthorities().stream().map(SimpleGrantedAuthority::getAuthority).toList();
 		claims.put(TOKEN_AUTHORITIES, groups);
 
 		return claims;

@@ -1,0 +1,67 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: order-service
+  labels:
+    app: order-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: order-service
+  template:
+    metadata:
+      labels:
+        app: order-service
+    spec:
+      containers:
+        - name: order-service
+          image: akjamie/bookstore-order-service:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+          env:
+          - name: SPRING_PROFILES_ACTIVE
+            value: k8s
+          - name: DB_USERNAME
+            valueFrom:
+              secretKeyRef:
+                key: "spring.datasource.username"
+                name: db-secret
+          - name: DB_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                key: "spring.datasource.password"
+                name: db-secret
+          - name: JWT_KEY_PATH
+            value: "file:/etc/keystore/rsa.pem"
+          - name: SECRET_NAME
+            value: db-secret
+          resources:
+            requests:
+              memory: 256Mi
+          readinessProbe:
+            httpGet:
+              port: 8080
+              path: /actuator/health
+            failureThreshold: 5
+            successThreshold: 3
+            initialDelaySeconds: 90
+            periodSeconds: 10
+          volumeMounts:
+            - mountPath: "/etc/keystore"
+              name: jwt-rsa-keystore
+              readOnly: true
+      volumes:
+        - name: jwt-rsa-keystore
+          secret:
+            secretName: jwt-rsa
+            items:
+              - key: rsa.pem
+                path: rsa.pem
+        - name: order-service-cm
+          configMap:
+            name: order-service
+        - name: order-service-secret
+          secret:
+            secretName: order-service

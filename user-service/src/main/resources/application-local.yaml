@@ -3,9 +3,12 @@ spring:
     url: jdbc:mysql://localhost:3306/iam?charset=utf8
     username: jamie
     password: Test1234
-  redis:
-    host: 192.168.179.157
-    port: 6379
+  data:
+    redis:
+      host: localhost
+      port: 6379
+  main:
+    cloud-platform: none
 
 springdoc:
   api-docs:
@@ -14,14 +17,15 @@ springdoc:
     disable-swagger-default-url: true
   info:
     service-name: User Service
-    description: sample user service backed by webflux + reactive mongo stream
+    description: Sample user service
     version: 1.0.0
     license-name: apache-2.0
     license-url: https://www.apache.org/licenses/LICENSE-2.0.html
     contact-name: Jamie Zhang
     contact-email: akjamie.zhang@outlook.com
     contact-url: https://akjamie.github.io
-    terms-of-service: copy right @2022
+    terms-of-service: copy right @2023
+  show-actuator: true
 
 server:
   port: 8045
