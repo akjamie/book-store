@@ -1,0 +1,51 @@
+spring:
+  data:
+    redis:
+      host: localhost
+      port: 6379
+  datasource:
+    url: jdbc:mysql://localhost:3306/order?charset=utf8
+    username: jamie
+    password: Test1234
+  jpa:
+    properties:
+      hibernate:
+        default_schema: order
+        show_sql: true;
+        format_sql: true
+  main:
+    cloud-platform: none
+  cloud:
+    kubernetes:
+      secrets:
+        enabled: false
+      config:
+        enabled: false
+auth:
+  jwt:
+    rsa-key-path: ${JWT_KEY_PATH:key-files/rsa-20221017.pem}
+
+logging:
+  level:
+    root: info
+    org.akj.springboot: debug
+server:
+  port: 8046
+
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    disable-swagger-default-url: true
+  info:
+    service-name: Order Service
+    description: sample order service
+    version: 1.0.0
+    license-name: apache-2.0
+    license-url: https://www.apache.org/licenses/LICENSE-2.0.html
+    contact-name: Jamie Zhang
+    contact-email: akjamie.zhang@outlook.com
+    contact-url: https://akjamie.github.io
+    terms-of-service: copy right @2023
+  show-actuator: true
+

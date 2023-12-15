@@ -1,0 +1,27 @@
+spring:
+  application:
+    name: order-service
+  main:
+    cloud-platform: kubernetes
+#  config:
+#    import: "kubernetes:"
+  cloud:
+    kubernetes:
+      discovery:
+        namespaces: ${NAMESPACE:book-store}
+      reload:
+        enabled: true
+        monitoring-config-maps: true
+        monitoring-secrets: true
+      loadbalancer:
+        mode: service
+        cluster-domain: it-meta.space
+      secrets:
+        name: ${SECRET_NAME:order-service}
+        enable-api: true
+        enabled: true
+      config:
+        name: ${CONFIG_MAP_NAME:order-service}
+        enabled: true
+        enable-api: true
+        namespace: ${NAMESPACE:book-store}
