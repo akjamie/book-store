@@ -2,27 +2,24 @@ spring:
   application:
     name: user-service
   main:
-    cloud-platform: none
-management:
-  health:
-    kubernetes:
-      enabled:false
-
----
-spring:
-  main:
     cloud-platform: kubernetes
   cloud:
     kubernetes:
+      discovery:
+        namespaces: ${NAMESPACE:book-store}
+      reload:
+        enabled: true
+        monitoring-config-maps: true
+        monitoring-secrets: true
       loadbalancer:
         mode: service
+        cluster-domain: it-meta.space
       secrets:
+        name: ${SECRET_NAME:user-service}
+        enable-api: true
         enabled: true
       config:
-        enabled: true
         name: ${CONFIG_MAP_NAME:user-service}
-
-management:
-  health:
-    kubernetes:
-      enabled:true
+        enabled: true
+        enable-api: true
+        namespace: ${NAMESPACE:book-store}

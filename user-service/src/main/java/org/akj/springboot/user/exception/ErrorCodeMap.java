@@ -14,7 +14,7 @@ public enum ErrorCodeMap {
     AUTHENTICATION_FAILED("100-012", "Authentication failed."),
     UNAUTHENTICATED("100-013", "Not authenticated."),
     ACCESS_DENIED("100-014", "Access denied."),
-    USER_LOGIN_NOT_ALLOWED("100-015", "User is allowed to login."),
+    USER_LOGIN_NOT_ALLOWED("100-015", "User is not allowed to login."),
     ;
 
     private String code;
